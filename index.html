@@ -8,118 +8,221 @@
     <style>
       * {
         box-sizing: border-box;
-        margin: 0px;
-        padding: 0px;
-        background-color: rgb(177, 90, 90);
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        background: #202124;
         color: white;
       }
-      .item-wrapper {
-        display: flex;
-        border: 1px solid black;
-        padding: 8px 16px;
-        align-items: center;
-        gap: 8px;
-      }
-      #main-screen {
-        flex: 3;
-        background-color: grey;
-      }
-      #sidebar {
-        flex: 1;
-        background-color: lightblue;
-      }
+
+      /* Layout */
       .wrapper {
         display: flex;
-        gap: 4px;
-      }
-      h1{
-        padding: 4px;
+        height: 100vh;
       }
 
-      .initial-element{
+      /* VIDEO AREA */
+      .video-area {
+        flex: 3;
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        margin: 20px;
+        background: #000;
+        border-radius: 18px;
+      }
+
+      /* Video card */
+      .video-card {
+        background: #000;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Name overlay */
+      .video-name {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        font-size: 14px;
+        background: rgba(0, 0, 0, 0.5);
         padding: 4px 8px;
+        border-radius: 6px;
+      }
+
+      /* SIDEBAR */
+      #sidebar {
+        flex: 1;
+        background: #202124;
+        border-left: 1px solid #3c4043;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .search {
+        background: #303134;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        color: #9aa0a6;
+      }
+
+      .section-title {
+        font-size: 18px;
+        color: #9aa0a6;
+        margin-bottom: 6px;
+      }
+
+      ul {
+        list-style: none;
+        overflow-y: auto;
+      }
+
+      /* People item */
+      .item-wrapper {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        border-radius: 10px;
+        transition: 0.2s;
+      }
+
+      .item-wrapper:hover {
+        background: #303134;
+      }
+
+      .item-left {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .initial-element {
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
-        background: grey;
+        background: #5f6368;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
-      .icon{
-        background: red;
-      }
-      .icon-container{
-           background: red;
-      }
-      #contributor{
-        display: flex; 
-        justify-content: space-between
+      /* CONTROLS */
+      .controls {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 14px;
       }
 
+      /* Buttons */
+      .control-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #303134;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .control-btn:hover {
+        background: #3c4043;
+      }
+
+      .end-call {
+        background: #ea4335;
+      }
     </style>
   </head>
   <body>
     <div class="wrapper">
-      <div id="main-screen"></div>
+      <!-- VIDEO GRID -->
+      <div class="video-area" id="video-area"></div>
+
+      <!-- SIDEBAR -->
       <div id="sidebar">
-        <h1>People</h1>
-        <div style="border: 1px solid;">Search bar</div>
-        <p></p>
-        In the meeting<br /><br />
-        <span id="contributor">
-          <span>Contributor</span>
-          <span>10</span>
-        </span>
+        <div>
+          <h2>People</h2>
+          
+        </div>
+        <br/>
+        <div class="search">Search</div>
+
+        <div class="section-title">Contributing</div>
+        <ul id="people-list"></ul>
       </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="control-btn">🎤</div>
+      <div class="control-btn">📹</div>
+      <div class="control-btn end-call">📞</div>
     </div>
   </body>
 </html>
 
 <script>
+  const names = ["Aviral", "Rahul", "Simran", "Ankit", "Priya"];
 
-  const sidebarElement = document.getElementById("sidebar");
+  /* VIDEO GRID */
+  const videoArea = document.getElementById("video-area");
 
-  const namesList = ["Aviral", "Rahul", "Aviral", "Rahul", "Aviral", "Rahul"];
+  const createVideoCard = (name) => {
+    const card = document.createElement("div");
+    card.classList.add("video-card");
 
-  const listContainer = document.createElement("ul");
-  sidebarElement.appendChild(listContainer);
+    const label = document.createElement("div");
+    label.classList.add("video-name");
+    label.innerText = name;
 
-  const createIcon = (iconPath) => {
-    const icon = document.createElement('span');
-    icon.classList.add("icon");
-    icon.innerHTML = iconPath;
-
-    return icon;
-  }
-
-  const createListItem = (name) => {
-    const itemWrapper = document.createElement("div");
-    itemWrapper.classList.add("item-wrapper");
-
-    const initialElement = document.createElement("p");
-    initialElement.classList.add("initial-element");
-    initialElement.innerText = name.charAt(0);
-    itemWrapper.appendChild(initialElement);
-
-    const fullNameElement = document.createElement("p");
-    fullNameElement.innerText = name;
-    itemWrapper.appendChild(fullNameElement);
-
-    // icons adding
-    const iconContainer = document.createElement("div");
-    iconContainer.classList.add("icon-container");
-    iconContainer.appendChild(createIcon('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="Hdh4hc cIGbvc"><path fill="none" d="M0 0h24v24H0zm0 0h24v24H0z"/><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28m-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18zM4.27 3 3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73z"/></svg>'));
-    iconContainer.appendChild(createIcon('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white"  class="Hdh4hc cIGbvc"><path fill="none" d="M0 0h24v24H0zm0 0h24v24H0z"/><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28m-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18zM4.27 3 3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73z"/></svg>'));
-    itemWrapper.appendChild(iconContainer);
-    //list adding
-    const listItem = document.createElement("li");
-    listItem.appendChild(itemWrapper);
-
-    listContainer.appendChild(listItem);
+    card.appendChild(label);
+    videoArea.appendChild(card);
   };
 
-  for (const name of namesList) {
-    createListItem(name);
-  }
+  names[0](createVideoCard);
 
-  // Contributor icon
-  const contributor = document.getElementById("contributor");
-  contributor.appendChild(createIcon('<svg xmlns="http://www.w3.org/2000/svg" fill="white" width="20px" height="20px" viewBox="0 0 14 9"><path d="M.19 1.272.81.653a.375.375 0 0 1 .53 0L7 6.3 12.66.653a.375.375 0 0 1 .53 0l.62.62a.375.375 0 0 1 0 .53L7.264 8.346a.375.375 0 0 1-.53 0L.19 1.802a.375.375 0 0 1 0-.53"/></svg>'))
+  /* PEOPLE LIST */
+  const list = document.getElementById("people-list");
+
+  const createPerson = (name) => {
+    const li = document.createElement("li");
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("item-wrapper");
+
+    const left = document.createElement("div");
+    left.classList.add("item-left");
+
+    const avatar = document.createElement("div");
+    avatar.classList.add("initial-element");
+    avatar.innerText = name[0];
+
+    const text = document.createElement("span");
+    text.innerText = name;
+
+    left.appendChild(avatar);
+    left.appendChild(text);
+
+    const right = document.createElement("div");
+    right.innerText = "🎤";
+
+    wrapper.appendChild(left);
+    wrapper.appendChild(right);
+    li.appendChild(wrapper);
+
+    list.appendChild(li);
+  };
+
+  names.forEach(createPerson);
 </script>
