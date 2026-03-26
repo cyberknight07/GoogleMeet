@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+        box-sizing: border-box;
+      }
+
+      #wrapper {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        width: 30vw;
+        border: 2px solid transparent;
+        background: linear-gradient(pink, red);
+        gap: 10px;
+
+        h1{
+            text-align: center;
+        }
+      }
+
+      #output {
+        display: flex;
+        flex-direction: column;
+        width: 30vw;
+        min-height: 40vh;
+        background-color: aliceblue;
+        border: 2px solid black;
+      }
+
+      #input-box{
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+      }
+
+      #input {
+        padding: 4px;
+        flex: 1;
+      }
+
+      #add-button {
+        padding: 4px;
+        letter-spacing: 2px;
+      }
+
+      .task-wrapper {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 0.5px solid black;
+        align-items: center;
+        padding: 4px;
+      }
+
+      .task-and-checkbox {
+        display: flex;
+        gap: 4px;
+      }
+
+      .delete-and-edit {
+        display: flex;
+        gap: 4px;
+      }
+
+      .icon {
+        width: 30px;
+        height: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>Task List</h1>
+      <div id="output"></div>
+      <div id="input-box">
+        <input type="text" id="input" /> <button id="add-button">Add</button>
+      </div>
+    </div>
+  </body>
+
+  <script>
+    const taskBody = (task) => {
+      const taskWrapper = document.createElement("div");
+      taskWrapper.classList.add("task-wrapper");
+      const taskAndcheckbox = document.createElement("div");
+      taskAndcheckbox.classList.add("task-and-checkbox");
+      const taskName = document.createElement("p");
+      taskName.classList.add("task-name");
+      taskName.innerText = task;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.classList.add("checkbox");
+
+      taskAndcheckbox.appendChild(checkbox);
+      taskAndcheckbox.appendChild(taskName);
+
+      // Delete and Edit Container
+      const deleteAndEdit = document.createElement("div");
+      deleteAndEdit.classList.add("delete-and-edit");
+      // delete icon
+      const deleteIcon = document.createElement("span");
+      deleteIcon.classList.add("icon");
+      deleteIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18"/>
+        <path d="M8 6V4h8v2"/>
+        <path d="M19 6l-1 14H6L5 6"/>
+        <path d="M10 11v6"/>
+        <path d="M14 11v6"/>
+        </svg>`;
+      // edit icon
+      const editIcon = document.createElement("span");
+      editIcon.classList.add("icon");
+      editIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+            </svg>`;
+    
+      editIcon.addEventListener('click', (e) => {
+        let updatedName = "";
+        taskName.innerHTML = `<input type = "string" id= "edit-task" value= ${task} onchange = {} />`;
+        // taskName.innerText = updatedName;
+      })
+
+      deleteAndEdit.appendChild(editIcon);
+      deleteAndEdit.appendChild(deleteIcon);
+
+      taskWrapper.appendChild(taskAndcheckbox);
+      taskWrapper.appendChild(deleteAndEdit);
+
+      return taskWrapper;
+    };
+
+    const wrapper = document.getElementById("wrapper");
+    let listOfTasks = ["Homework", "Flew", "Market", "Office"];
+
+    const inputBox = document.getElementById("input");
+    const outputBox = document.getElementById("output");
+    const addButton = document.getElementById("add-button");
+
+    // Set Input Box value
+    let task = "";
+    inputBox.addEventListener("mouseenter", (e) => {
+        task = task + e.target.value; // Use mouse enter as having problem in change
+    })
+
+    addButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log(task);
+        if(task !== ""){
+            listOfTasks.push(task);
+            outputBox.appendChild(taskBody(task))
+            task = "";
+        }
+
+        console.log(listOfTasks);
+
+    // // Update Output Box details
+    // listOfTasks.map((task, index) => outputBox.appendChild(taskBody(task, index)));
+    // console.log(listOfTasks);
+    })
+
+
+    // Output Box details
+    listOfTasks.map((task) => outputBox.appendChild(taskBody(task)));
+    
+    
+  </script>
+</html>
