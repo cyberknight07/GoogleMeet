@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      :root {
+        --gradient-color: linear-gradient(aliceblue, rgb(121, 149, 251));
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        background: var(--gradient-color);
+        padding: 4px;
+      }
+
+      .head-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 92vw;
+        padding: 0px 10px;
+        background: var(--gradient-color);
+        top: 0px;
+        z-index: 1000;
+        position: sticky;
+      }
+
+      .head-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .profile {
+        background-color: orange;
+        padding: 8px;
+        border-radius: 18px;
+      }
+
+      .profile:hover {
+        background: rgb(235, 134, 10);
+        cursor: pointer;
+      }
+
+      .cart {
+        padding: 4px 8px;
+        background: lightgreen;
+        border-radius: 4px;
+        border: 1px solid rgb(6, 207, 6);
+      }
+
+      .cart:hover {
+        background: rgb(6, 207, 6);
+        cursor: pointer;
+      }
+
+      #main-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .product-body {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(pink, rgb(253, 127, 148));
+        width: 22vw;
+        border: 1px solid linear-gradient((rgb(253, 127, 148), pink));
+        border-radius: 4px;
+      }
+
+      .primary-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 9px 0px;
+        height: 300px;
+        img {
+          width: 21vw;
+          object-fit: fill;
+        }
+      }
+
+      .secondary-wrapper {
+        padding: 10px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        p {
+          margin: 0px;
+        }
+      }
+
+      .cat-and-price {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .product-cat {
+          padding: 4px;
+          border: 1px solid transparent;
+          border-radius: 4px;
+          background: rgb(70, 87, 44);
+          color: white;
+        }
+        .product-price {
+          font-weight: 700;
+        }
+      }
+
+      .product-name {
+        font-weight: 800;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .product-desc {
+        font-weight: 300;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="main-wrapper"></div>
+    </div>
+  </body>
+
+  <script>
+    const Header = (user) => {
+      const headContainer = document.createElement("section");
+      headContainer.classList.add("head-container");
+      const leftContainer = document.createElement("div");
+      leftContainer.classList.add("head-left");
+      const rightContainer = document.createElement("div");
+      rightContainer.classList.add("head-right");
+
+      // left container
+      const cName = document.createElement("p");
+      cName.classList.add("cName");
+      cName.innerText = "FashionMania";
+      leftContainer.appendChild(cName);
+
+      // right container
+      const profile = document.createElement("div");
+      profile.classList.add("profile");
+      profile.innerText = `${user.name.split(" ")[0].charAt(0)}${user.name.split(" ")[1].charAt(0)}`;
+
+      //Cart
+      const cart = document.createElement("div");
+      cart.classList.add("cart");
+      cart.innerText = "Cart";
+      rightContainer.appendChild(profile);
+      rightContainer.appendChild(cart);
+      //merging
+      headContainer.appendChild(leftContainer);
+      headContainer.appendChild(rightContainer);
+
+      return headContainer;
+    };
+
+    const currentUser = {
+      name: "Aviral Jain",
+      address: "25, Sector 3, Udaipur",
+      orders: [],
+    };
+    const header = Header(currentUser);
+
+    const mainWrapper = document.getElementById("main-wrapper");
+    const container = document.getElementById("container");
+    container.appendChild(header);
+    container.appendChild(mainWrapper);
+
+    const productBody = (product) => {
+      const productBodyElem = document.createElement("div");
+      productBodyElem.classList.add("product-body");
+      const primaryWrapperElem = document.createElement("div");
+      primaryWrapperElem.classList.add("primary-wrapper");
+      const secondaryWrapperElem = document.createElement("div");
+      secondaryWrapperElem.classList.add("secondary-wrapper");
+
+      //primary wrapper
+      const productImageElem = document.createElement("img");
+      productImageElem.src = product.image;
+      productImageElem.alt = product.name;
+      productImageElem.classList.add("product-image");
+
+      primaryWrapperElem.appendChild(productImageElem);
+
+      //secondary wrapper
+
+      //Category
+      const productCatElem = document.createElement("p");
+      productCatElem.classList.add("product-cat");
+      productCatElem.innerText = product.category;
+      //Price
+      const productPriceElem = document.createElement("p");
+      productPriceElem.classList.add("product-price");
+      productPriceElem.innerText = product.price;
+
+      //Cat & Price
+      const catAndPriceElem = document.createElement("div");
+      catAndPriceElem.classList.add("cat-and-price");
+      catAndPriceElem.appendChild(productCatElem);
+      catAndPriceElem.appendChild(productPriceElem);
+      secondaryWrapperElem.appendChild(catAndPriceElem);
+
+      //name
+      if (product.title) {
+        const productNameElem = document.createElement("p");
+        productNameElem.classList.add("product-name");
+        productNameElem.innerText = product.title;
+        secondaryWrapperElem.appendChild(productNameElem);
+      }
+      //description
+      if (product.description) {
+        const productDescElem = document.createElement("p");
+        productDescElem.classList.add("product-desc");
+        productDescElem.innerText = product.description;
+        secondaryWrapperElem.appendChild(productDescElem);
+      }
+
+      // Merging
+      productBodyElem.appendChild(primaryWrapperElem);
+      productBodyElem.appendChild(secondaryWrapperElem);
+
+      mainWrapper.appendChild(productBodyElem);
+
+      return productBodyElem;
+    };
+
+    const AddToCart = (product) => {};
+
+
+
+    fetch("https://fakestoreapi.com/products")
+      .then((res) => res.json())
+      .then((data) => {
+        data?.map((product) => {
+          console.log(product);
+          productBody(product);
+        });
+      })
+      .catch((e) => console.error(e));
+  </script>
+</html>
