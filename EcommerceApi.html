@@ -15,7 +15,7 @@
         flex-direction: column;
         align-items: center;
         position: relative;
-        background: var(--gradient-color);
+        background: linear-gradient(aliceblue, rgb(121, 149, 251));
         padding: 4px;
       }
 
@@ -25,7 +25,6 @@
         align-items: center;
         width: 92vw;
         padding: 0px 10px;
-        background: var(--gradient-color);
         top: 0px;
         z-index: 1000;
         position: sticky;
@@ -241,8 +240,6 @@
 
     const AddToCart = (product) => {};
 
-
-
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => {
@@ -252,5 +249,32 @@
         });
       })
       .catch((e) => console.error(e));
+
+    // Update background color based on scroll position
+    window.addEventListener("scroll", () => {
+      // Calculate scroll percentage (0 to 1)
+      const scrollPercentage =
+        window.scrollY /
+        (document.documentElement.scrollHeight - window.innerHeight);
+
+      // Define start and end colors (RGB)
+      const startColor = [240, 248, 255];  // aliceblue
+      const endColor = [136, 162, 252];    // rgb(121, 149, 251)
+
+      // Interpolate between colors
+      const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * scrollPercentage/1.25);
+      const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * scrollPercentage/1.25);
+      const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * scrollPercentage/1.25);
+
+      // Update the background color based on scroll position
+      document.documentElement.style.setProperty(
+        "--gradient-color",
+        `rgb(${r}, ${g}, ${b})`
+      );
+  
+      const headContainer = document.getElementsByClassName('head-container')[0];
+      headContainer.style.background = `rgb(${r}, ${g}, ${b})`;
+    });
+
   </script>
 </html>
