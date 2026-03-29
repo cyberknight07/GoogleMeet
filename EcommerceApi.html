@@ -7,7 +7,7 @@
 
     <style>
       :root {
-        --gradient-color: linear-gradient(aliceblue, rgb(121, 149, 251));
+        --gradient-color: linear-gradient(white, black);
       }
 
       #container {
@@ -15,7 +15,7 @@
         flex-direction: column;
         align-items: center;
         position: relative;
-        background: linear-gradient(aliceblue, rgb(121, 149, 251));
+        background: linear-gradient(white, black);
         padding: 4px;
       }
 
@@ -127,6 +127,46 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+
+      .add-to-cart-container {
+        display: flex;
+        gap: 4px;
+      }
+      .add-to-cart {
+        flex: 1;
+        text-align: center;
+        background: blue;
+        color: honeydew;
+        padding: 4px;
+        border-radius: 4px;
+      }
+      .add-to-cart:hover {
+        cursor: pointer;
+        background: radial-gradient(blue, darkblue);
+        background-attachment: fixed;
+      }
+
+      .product-cart-count {
+        padding: 4px 8px;
+        text-align: center;
+        background-color: lightyellow;
+        color: black;
+        border-radius: 4px;
+      }
+
+      .cart-window {
+        width: 80vw;
+        height: 80vh;
+        background: wheat;
+        z-index: 2000;
+        position: absolute;
+        top: 100px;
+      }
+
+      .card {
+        width: 80vw;
+        background: white;
+      }
     </style>
   </head>
   <body>
@@ -136,6 +176,10 @@
   </body>
 
   <script>
+    const cartList = {};
+    let isCartOpen = false;
+    let cartWindowElem = null;
+
     const Header = (user) => {
       const headContainer = document.createElement("section");
       headContainer.classList.add("head-container");
@@ -226,8 +270,40 @@
         const productDescElem = document.createElement("p");
         productDescElem.classList.add("product-desc");
         productDescElem.innerText = product.description;
+        productDescElem.onclick = () => {
+          productDescElem.style.whiteSpace = "wrap";
+        };
         secondaryWrapperElem.appendChild(productDescElem);
       }
+
+      // Add to cart
+      const addToCartContainer = document.createElement("span");
+      addToCartContainer.classList.add("add-to-cart-container");
+      const addToCart = document.createElement("span");
+      addToCart.classList.add("add-to-cart");
+      addToCart.innerText = "Add to Cart";
+      const countElem = document.createElement("span");
+      countElem.classList.add("product-cart-count");
+      addToCart.onclick = () => {
+        // Check if product ID already exists in cartList
+        if (!cartList[product.id]) {
+          // Product NOT in cart - ADD IT as new entry
+          cartList[product.id] = {
+            product: product,
+            count: 1,
+          };
+        } else {
+          // Product already exists in cart - INCREMENT count
+          cartList[product.id].count++;
+        }
+
+        countElem.innerText = cartList[product.id].count;
+        addToCartContainer.appendChild(countElem);
+        console.log(cartList);
+      };
+
+      addToCartContainer.appendChild(addToCart);
+      secondaryWrapperElem.appendChild(addToCartContainer);
 
       // Merging
       productBodyElem.appendChild(primaryWrapperElem);
@@ -238,13 +314,10 @@
       return productBodyElem;
     };
 
-    const AddToCart = (product) => {};
-
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => {
         data?.map((product) => {
-          console.log(product);
           productBody(product);
         });
       })
@@ -258,23 +331,93 @@
         (document.documentElement.scrollHeight - window.innerHeight);
 
       // Define start and end colors (RGB)
-      const startColor = [240, 248, 255];  // aliceblue
-      const endColor = [136, 162, 252];    // rgb(121, 149, 251)
+      const startColor = [255, 255, 255]; // aliceblue
+      const endColor = [0, 0, 0]; // rgb(121, 149, 251)
 
       // Interpolate between colors
-      const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * scrollPercentage/1.25);
-      const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * scrollPercentage/1.25);
-      const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * scrollPercentage/1.25);
+      const r = Math.round(
+        startColor[0] +
+          ((endColor[0] - startColor[0]) * scrollPercentage) / 1.45,
+      ); // These scroll percentage should modify based on color.
+      const g = Math.round(
+        startColor[1] +
+          ((endColor[1] - startColor[1]) * scrollPercentage) / 1.45,
+      );
+      const b = Math.round(
+        startColor[2] +
+          ((endColor[2] - startColor[2]) * scrollPercentage) / 1.45,
+      );
 
       // Update the background color based on scroll position
       document.documentElement.style.setProperty(
         "--gradient-color",
-        `rgb(${r}, ${g}, ${b})`
+        `rgb(${r}, ${g}, ${b})`,
       );
-  
-      const headContainer = document.getElementsByClassName('head-container')[0];
+
+      const headContainer =
+        document.getElementsByClassName("head-container")[0];
       headContainer.style.background = `rgb(${r}, ${g}, ${b})`;
     });
 
+    //CartPage or Cart Window
+
+    const cart = document.querySelector(".cart");
+    cart.addEventListener("click", () => {
+      isCartOpen = !isCartOpen;
+
+      if (isCartOpen) {
+        cartWindowElem = createCartWindow();
+        container.appendChild(cartWindowElem);
+      } else {
+        cartWindowElem?.remove();
+        cartWindowElem = null;
+      }
+    });
+
+    const createCartWindow = () => {
+      const cartWindow = document.createElement("section");
+      cartWindow.classList.add("cart-window");
+      const cartItemCard = (cartItem) => {
+        const card = document.createElement("section");
+        card.classList.add("cart-item-card");
+        const leftCard = document.createElement("div");
+        leftCard.classList.add("cart-card-left");
+        const rightCard = document.createElement("div");
+        rightCard.classList.add("cart-card-right");
+
+        //cart-card-left
+        leftCard.innerHTML = `<img src= ${cartItem.product.image}/>`;
+
+        //cart-card-right
+        const namePrice = document.createElement("div");
+        namePrice.classList.add("cart-item-name-price");
+        const name = document.createElement("p");
+        name.classList.add("cart-item-name");
+        name.innerText = cartItem.product.title;
+        const price = document.createElement("p");
+        price.classList.add("cart-item-price");
+        price.innerText = cartItem.count * cartItem.product.price;
+        namePrice.appendChild(name);
+        namePrice.appendChild(price);
+        rightCard.appendChild(namePrice);
+        card.appendChild(leftCard);
+        card.appendChild(rightCard);
+
+        return card;
+      };
+
+      //Shopping-Cart
+      const cartHeader = document.createElement("h3");
+      cartHeader.innerText = "Shopping Cart";
+      const hr = document.createElement("hr");
+      cartWindow.appendChild(cartHeader);
+      cartWindow.appendChild(hr);
+
+      Object.values(cartList).map((item) => {
+        cartWindow.appendChild(cartItemCard(item));
+      });
+
+      return cartWindow;
+    };
   </script>
 </html>
