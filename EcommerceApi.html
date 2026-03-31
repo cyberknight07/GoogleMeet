@@ -1022,9 +1022,10 @@
           decreaseBtn.onclick = () => {
             if (item.count > 1) {
               item.count--;
-              cartWindowElem?.remove();
-              cartWindowElem = createCartWindow();
-              container.appendChild(cartWindowElem);
+              quantityDisplay.innerText = item.count;
+              itemQuantity.innerText = `Quantity: ${item.count}`;
+              itemTotal.innerText = `Total: $${(item.product.price * item.count).toFixed(2)}`;
+              updateCartSummary();
             }
           };
 
@@ -1037,9 +1038,10 @@
           increaseBtn.innerText = "+";
           increaseBtn.onclick = () => {
             item.count++;
-            cartWindowElem?.remove();
-            cartWindowElem = createCartWindow();
-            container.appendChild(cartWindowElem);
+            quantityDisplay.innerText = item.count;
+            itemQuantity.innerText = `Quantity: ${item.count}`;
+            itemTotal.innerText = `Total: $${(item.product.price * item.count).toFixed(2)}`;
+            updateCartSummary();
           };
 
           const removeBtn = document.createElement("button");
@@ -1127,7 +1129,18 @@
 
       cartFooter.appendChild(checkoutBtn);
       cartWindow.appendChild(cartFooter);
-  
+
+      const updateCartSummary = () => {
+        let totalItems = 0;
+        let grandTotal = 0;
+        Object.values(cartList).forEach((item) => {
+          totalItems += item.count;
+          grandTotal += item.product.price * item.count;
+        });
+        summaryValue.innerText = totalItems;
+        totalValue.innerText = `$${grandTotal.toFixed(2)}`;
+      };
+
       return cartWindow;
     };
   </script>
