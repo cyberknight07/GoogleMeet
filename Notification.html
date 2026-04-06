@@ -1,0 +1,80 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+
+            #main{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .form{
+                display:flex;
+                flex-direction:column;
+                gap: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+        </div>
+    </body>
+    </html>
+
+    <script>
+
+        let username = '';
+        let appName = '';
+        const onChangeValue = (e) => {
+            console.log(e.target.value);
+            e.target.name = e.target.value;
+        }
+
+        const main = document.getElementById('main')
+        const form = document.createElement('form');
+        form.classList.add('form');
+        form.innerHTML = `<label for="Name">Name <input type="text" placeholder="User Name" name="username" value=${username} onchange = ${(e) => e.target.value}/></label><label for="appName">Application Name <input type="text" name="appname" placeholder="Application Name" value=${appName} onchange = ${(e) => onChangeValue(e)}/></label><input type="submit"/>`;
+        const outputBox = document.createElement('div');
+
+        main.appendChild(form);
+        main.appendChild(outputBox);
+
+            
+        
+    
+    const generateOTP = (length = 6) => {
+        return Math.floor(
+        Math.pow(10, length - 1) + Math.random() * 9 * Math.pow(10, length - 1),
+        );
+    };
+
+    const createOTPMessage = (name = "User", otp, appName = "Application") => {
+        return `Hello ${name}, your ${appName} app OTP is ${otp}. 
+    Please do not share it with anyone & it's valid for 30 min only.`;
+    };
+
+    const items = [
+        {
+        id: 1,
+        name: "Item 1",
+        app: "Google",
+        },
+        {
+        id: 2,
+        name: undefined,
+        app: "InOffice",
+        },
+    ];
+
+    items.forEach((item) => {
+        const { name, app: application } = item;
+        console.log(createOTPMessage(name,generateOTP(5),  application));
+    });
+
+    const sendOtp = () => {}
+    </script>
